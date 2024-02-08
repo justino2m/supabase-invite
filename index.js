@@ -2,6 +2,8 @@ require('dotenv').config(); // Load environment variables from .env file
 const fs = require('fs');
 const csv = require('csv-parser');
 const { createClient } = require('@supabase/supabase-js');
+const path = require('path');
+const logDir = 'logs';
 
 // Replace these with your Supabase project credentials
 const supabase_url = process.env.SUPABSE_URL;
@@ -21,12 +23,14 @@ const csvFilePath = 'users.csv'; // Update with the correct path
 // Define an array to store user emails
 const usersToInvite = [];
 
+// Create logs directory if it does not exist
+if (!fs.existsSync(logDir)){
+  fs.mkdirSync(logDir);
+}
+
 // Create a unique error log filename with timestamp
 const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\..+/, '');
-const errorLogFileName = `error_${timestamp}.log`;
-
-// Create error log file if not exists
-fs.writeFileSync(errorLogFileName, '');
+const errorLogFileName = path.join(logDir, `error_${timestamp}.log`);
 
 async function inviteUsers() {
   let successfulInvites = 0;
